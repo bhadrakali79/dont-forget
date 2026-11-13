@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A very sad message for you 🥺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #1b1446;
+    --card: #2b2070;
+    --pink: #ff4f8b;
+    --sun: #ffd23f;
+    --mint: #5be3b5;
+    --text: #fff;
+    --soft: #cfc8ff;
+    --display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+    --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: var(--body);
+    font-weight: 600;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 15% 10%, #3a2a9a 0, transparent 40%),
+      radial-gradient(circle at 90% 90%, #6a1f68 0, transparent 40%),
+      var(--night);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    overflow-x: hidden;
+  }
+  main {
+    width: 100%;
+    max-width: 460px;
+    background: var(--card);
+    border-radius: 28px;
+    padding: 26px 22px 28px;
+    box-shadow: 0 0 0 4px var(--sun), 10px 12px 0 4px var(--pink);
+    position: relative;
+  }
+  .dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 18px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: #4a3fa0; transition: background .3s, transform .3s; }
+  .dots i.on { background: var(--sun); transform: scale(1.3); }
+
+  h1, h2 { font-family: var(--display); font-weight: 400; letter-spacing: .02em; line-height: 1.1; }
+  h1 { font-size: 2.1rem; }
+  h2 { font-size: 1.7rem; }
+  p { line-height: 1.5; color: var(--soft); margin: 10px 0; }
+  p b { color: var(--text); }
+
+  .step { display: none; }
+  .step.show { display: block; animation: pop .45s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { from { opacity: 0; transform: scale(.92) translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* the meme panel */
+  .meme {
+    position: relative; overflow: hidden;
+    background: linear-gradient(#5b4bd0, #2e2480);
+    border: 3px solid #fff; border-radius: 16px;
+    height: 270px; margin: 16px 0;
+    display: grid; place-items: center;
+  }
+  .meme .cap {
+    position: absolute; left: 0; right: 0; text-align: center; padding: 0 10px;
+    font-family: var(--display); font-size: 1.7rem; text-transform: uppercase; line-height: 1.05;
+    color: #fff; -webkit-text-stroke: 1px #000; paint-order: stroke fill;
+    text-shadow: 2px 2px 0 #000;
+  }
+  .meme .top { top: 10px; }
+  .meme .bottom { bottom: 10px; }
+  .face { font-size: 8rem; line-height: 1; user-select: none; -webkit-user-select: none; }
+  .sad .face { animation: sob 1.2s ease-in-out infinite; }
+  @keyframes sob { 50% { transform: translateY(6px) rotate(-3deg); } }
+  .tear { position: absolute; top: 48%; font-size: 1.6rem; animation: rain 1.6s linear infinite; opacity: 0; }
+  @keyframes rain { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(110px); } }
+
+  button, .btn {
+    font-family: var(--body); font-weight: 800; font-size: 1.05rem;
+    border: 0; border-radius: 14px; padding: 14px 18px; cursor: pointer;
+    background: var(--sun); color: #2a1a00; width: 100%;
+    box-shadow: 0 5px 0 #b88f00; transition: transform .1s, box-shadow .1s;
+    display: inline-block; text-align: center; text-decoration: none;
+  }
+  button:active, .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #b88f00; }
+  button:focus-visible, .btn:focus-visible, .chip:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  button.ghost { background: #4a3fa0; color: #fff; box-shadow: 0 5px 0 #30277a; }
+  button.yes { background: var(--mint); color: #05382a; box-shadow: 0 5px 0 #2a9e78; font-size: 1.2rem; }
+  button[hidden] { display: none; }
+
+  /* missed-call screen */
+  .phone { background: #140e36; border-radius: 16px; padding: 14px; margin: 14px 0; }
+  .row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed #3d3490; gap: 12px; }
+  .row:last-child { border: 0; }
+  .row span:last-child { color: var(--pink); font-weight: 800; text-align: right; }
+  .bar { height: 14px; background: #3d3490; border-radius: 9px; overflow: hidden; margin-top: 6px; }
+  .bar div { height: 100%; width: 4%; background: var(--pink); border-radius: 9px; transition: width 1.6s ease-out; }
+
+  /* excuses */
+  .excuses { display: grid; gap: 10px; margin: 14px 0; }
+  .verdict {
+    min-height: 74px; background: #140e36; border-left: 6px solid var(--pink);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; line-height: 1.45;
+  }
+
+  /* healing */
+  .tapzone { cursor: pointer; }
+  .heal { height: 12px; background: #140e36; border-radius: 8px; overflow: hidden; margin: 6px 0 14px; }
+  .heal div { height: 100%; width: 0; background: var(--mint); transition: width .25s; }
+
+  /* the finale */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .chip {
+    flex: 1 1 auto; text-align: center; padding: 10px 12px; border-radius: 12px; cursor: pointer;
+    background: #4a3fa0; border: 2px solid transparent; font-weight: 800; color: #fff; font-family: var(--body); box-shadow: none; width: auto; font-size: .95rem;
+  }
+  .chip.on { border-color: var(--sun); background: #5d50c9; }
+  .arena { position: relative; height: 150px; margin-top: 8px; }
+  .arena .yes { position: absolute; left: 0; right: 0; top: 0; }
+  #no { position: absolute; width: auto; top: 78px; left: 0; padding: 10px 16px; font-size: .95rem; transition: left .18s, top .18s; }
+  .ticket {
+    border: 3px dashed var(--sun); border-radius: 16px; padding: 16px; margin: 14px 0; background: #140e36;
+    text-align: center;
+  }
+  .ticket .big { font-family: var(--display); font-size: 1.9rem; color: var(--sun); margin: 6px 0; }
+  .secret { margin-top: 16px; }
+  .secret label { display: block; font-family: var(--display); font-size: 1.4rem; letter-spacing: .02em; margin-bottom: 8px; }
+  .secret textarea {
+    width: 100%; resize: vertical; min-height: 96px; padding: 12px 14px; margin-bottom: 12px;
+    font-family: var(--body); font-weight: 600; font-size: 1rem; line-height: 1.4;
+    color: #fff; background: #140e36; border: 2px solid #4a3fa0; border-radius: 12px;
+  }
+  .secret textarea::placeholder { color: #8f87dc; }
+  .secret textarea:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; border-color: var(--sun); }
+  .status { min-height: 1.4em; margin-top: 10px; text-align: center; color: var(--mint); }
+  .status.err { color: var(--pink); }
+  .fine { font-size: .8rem; color: #9d95e8; text-align: center; margin-top: 14px; }
+
+  .confetti { position: fixed; top: -30px; font-size: 1.6rem; pointer-events: none; z-index: 10; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 1.8rem; }
+    .face { font-size: 6.5rem; }
+    .meme { height: 240px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+
+  <!-- 1. The sad meme -->
+  <section class="step show">
+    <h1>Hey <span class="fname">soldier</span>… 🥺</h1>
+    <div class="meme sad" role="img" aria-label="A very sad crying emoji with the caption: one month, no call">
+      <div class="cap top">Me waiting for your call</div>
+      <span class="tear" style="left:38%;animation-delay:0s">💧</span>
+      <span class="tear" style="left:56%;animation-delay:.7s">💧</span>
+      <div class="face">😭</div>
+      <div class="cap bottom">It’s been 1 month</div>
+    </div>
+    <p>I’m not angry. I’m just <b>sad and shocked</b>. Like a phone with 11% battery and no charger.</p>
+    <button data-next>Why am I sad? Show me</button>
+  </section>
+
+  <!-- 2. Missed-call report -->
+  <section class="step">
+    <h2>Official Friendship Report 📋</h2>
+    <div class="phone">
+      <div class="row"><span>Calls from you</span><span>0</span></div>
+      <div class="row"><span>Days since last call</span><span id="days">0</span></div>
+      <div class="row"><span>Times I reminded you</span><span>“multiple”</span></div>
+      <div class="row"><span>Times you forgot</span><span>also multiple</span></div>
+      <div style="padding-top:10px">Friendship battery
+        <div class="bar"><div id="battery"></div></div>
+      </div>
+    </div>
+    <p>Not me being dramatic. This is <b>Data</b>.</p>
+    <button data-next>Let me explain myself</button>
+  </section>
+
+  <!-- 3. Excuse court -->
+  <section class="step">
+    <h2>Pick your excuse ⚖️</h2>
+    <p>The Supreme Court of Friendship is listening.</p>
+    <div class="excuses">
+      <button class="ghost excuse" data-v="“I was busy.” You were busy for 30 days straight? Madam, that’s not busy, that’s a full-time job at ignoring me :( 💼 Rejected.">“I was super busy”</button>
+      <button class="ghost excuse" data-v="“I forgot.” Wow. That’s the same excuse as last time. At least be creative! ❌ Rejected.">“I forgot”</button>
+      <button class="ghost excuse" data-v="“I’m bad at calls.” You’re bad at calls? Then practice on me. I’m the best beginner-expert-level audience. 🎤 Rejected">“I’m bad at calls”</button>
+      <button class="ghost excuse" data-v="“I was about to call you.” The court has heard this before… in a previous life. ⏳ Rejected.">“I was about to call”</button>
+    </div>
+    <div class="verdict" id="verdict" aria-live="polite">Tap an excuse. I’ll wait. (I’m good at waiting, as you’ve seen.)</div>
+    <button data-next id="afterExcuse" hidden>Fine, I accept my fate</button>
+  </section>
+
+  <!-- 4. Heal the sad face -->
+  <section class="step">
+    <h2>Cheer me up? 🩹</h2>
+    <p>Tap my sad face to fix it. It takes 5 taps one-by-one slowly. Tiny effort, huge love.</p>
+    <div class="meme tapzone" id="tapzone" role="button" tabindex="0" aria-label="Tap to cheer up the sad face">
+      <div class="cap top" id="healCap">Please help</div>
+      <div class="face" id="healFace">😭</div>
+      <div class="cap bottom" id="healCap2">I need a friend</div>
+    </div>
+    <div class="heal"><div id="healBar"></div></div>
+    <button data-next id="afterHeal" hidden>Okay okay, what do you want?</button>
+  </section>
+
+  <!-- 5. The ask -->
+  <section class="step">
+    <h2>One tiny thing 📞</h2>
+    <p>Call me <b>tonight</b>. Just talk. No agenda. Pick a time:</p>
+    <div class="chips" id="chips">
+      <button class="chip on" data-t="11 PM">11 PM</button>
+      <button class="chip" data-t="12 AM">12 AM</button>
+      <button class="chip" data-t="1 AM">1 AM</button>
+      <button class="chip" data-t="right now">Right now 😎</button>
+    </div>
+    <div class="arena" id="arena">
+      <button class="yes" id="yes">Yes, I’ll call tonight! 🎉</button>
+      <button class="ghost" id="no">No</button>
+    </div>
+  </section>
+
+  <!-- 6. Done -->
+  <section class="step">
+    <h1>Appointment booked! Jai Maa 🎉</h1>
+    <div class="ticket">
+      <div>Phone call with <b class="mine">me</b></div>
+      <div class="big" id="when">Tonight</div>
+      <div>No cancelling. No “I forgot/ Me bhool gyi”. 😤💛</div>
+    </div>
+    <p>Thank you, <span class="fname">Ramyaaa</span>. There's 101 things to tell you, and that’s the whole reason for this silly website.</p>
+    <div class="secret">
+      <label for="secret">Any secret to tell? 🤫</label>
+      <textarea id="secret" rows="4" maxlength="800" placeholder="A confession, an apology, a roast… it comes straight to my inbox."></textarea>
+      <button type="button" id="send">Send my secret</button>
+      <div class="status" id="status" aria-live="polite"></div>
+    </div>
+    <p class="fine">Made with love, memes, and mild emotional damage.</p>
+  </section>
+</main>
+
+<script>
+  /* ====== EDIT THESE THREE THINGS ====== */
+  const FRIEND_NAME = "Ramya";        // your friend's name (or share the link as ?name=Rahul)
+  const MY_NAME     = "Prateek";  // your name
+  const MY_EMAIL    = "prat777000@gmail.com";             // the email where you want to receive the secret, e.g. "you@gmail.com"
+  /* ===================================== */
+
+  const params = new URLSearchParams(location.search);
+  const friend = (params.get("name") || FRIEND_NAME).slice(0, 30);
+  document.querySelectorAll(".fname").forEach(el => el.textContent = friend);
+  document.querySelector(".mine").textContent = MY_NAME;
+  document.title = "Hey " + friend + ", a very sad message 🥺";
+
+  const steps = [...document.querySelectorAll(".step")];
+  const dots = document.getElementById("dots");
+  steps.forEach(() => dots.appendChild(document.createElement("i")));
+  let current = 0;
+
+  function go(i) {
+    steps[current].classList.remove("show");
+    current = i;
+    steps[current].classList.add("show");
+    [...dots.children].forEach((d, k) => d.classList.toggle("on", k <= current));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (current === 1) runReport();
+    if (current === 4) placeNo();
+  }
+  document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => go(current + 1)));
+  go(0);
+
+  /* step 2: counters */
+  function runReport() {
+    const days = document.getElementById("days");
+    let n = 0;
+    const t = setInterval(() => { n++; days.textContent = n; if (n >= 30) clearInterval(t); }, 40);
+    setTimeout(() => document.getElementById("battery").style.width = "3%", 100);
+  }
+
+  /* step 3: excuses */
+  const verdict = document.getElementById("verdict");
+  document.querySelectorAll(".excuse").forEach(b => b.addEventListener("click", () => {
+    verdict.textContent = b.dataset.v;
+    document.getElementById("afterExcuse").hidden = false;
+  }));
+
+  /* step 4: heal the face */
+  const faces = ["😭", "😢", "🥺", "🙂", "😄"];
+  const caps = [["Please help", "I need a friend"], ["Ok that helps…", "A little"], ["Hmm, getting there", "Keep going"], ["I feel better", "Almost"], ["I’M HAPPY", "YOU’RE THE BEST"]];
+  let taps = 0;
+  const zone = document.getElementById("tapzone");
+  function heal() {
+    if (taps >= 5) return;
+    taps++;
+    const k = Math.min(taps, 4);
+    document.getElementById("healFace").textContent = faces[k];
+    document.getElementById("healCap").textContent = caps[k][0];
+    document.getElementById("healCap2").textContent = caps[k][1];
+    document.getElementById("healBar").style.width = (taps * 20) + "%";
+    if (taps === 5) { confetti(["💛", "✨", "🎈"]); document.getElementById("afterHeal").hidden = false; }
+  }
+  zone.addEventListener("click", heal);
+  zone.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); heal(); } });
+
+  /* step 5: time chips + runaway "No" */
+  let when = "11 PM";
+  document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(x => x.classList.remove("on"));
+    c.classList.add("on");
+    when = c.dataset.t;
+  }));
+
+  const no = document.getElementById("no");
+  const arena = document.getElementById("arena");
+  const noLines = ["No", "Are you sure?", "Think of my feelings", "This button is tired", "Just say yes 🥺", "Nice try"];
+  let noCount = 0;
+  function placeNo() {
+    const maxX = Math.max(0, arena.clientWidth - no.offsetWidth);
+    no.style.left = Math.random() * maxX + "px";
+    no.style.top = (70 + Math.random() * 60) + "px";
+  }
+  function dodge(e) {
+    e.preventDefault();
+    noCount++;
+    no.textContent = noLines[noCount % noLines.length];
+    placeNo();
+  }
+  no.addEventListener("pointerenter", dodge);
+  no.addEventListener("pointerdown", dodge);
+  no.addEventListener("click", dodge);
+  no.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") dodge(e); });
+
+  /* step 6: confirm */
+  document.getElementById("yes").addEventListener("click", () => {
+    const label = when === "right now" ? "Right now!" : "Tonight at " + when;
+    document.getElementById("when").textContent = label;
+    bookedLabel = label;
+    confetti(["🎉", "📞", "💛", "🥳", "✨"]);
+    go(5);
+  });
+
+  /* send the secret to your inbox via FormSubmit */
+  let bookedLabel = "";
+  const sendBtn = document.getElementById("send");
+  const statusEl = document.getElementById("status");
+  function say(text, isErr) { statusEl.textContent = text; statusEl.classList.toggle("err", !!isErr); }
+
+  sendBtn.addEventListener("click", async () => {
+    const box = document.getElementById("secret");
+    const secret = box.value.trim();
+    if (!secret) { say("Type something first, even just “sorry” 😅", true); return; }
+    if (!MY_EMAIL) { say("Owner note: add your email in the code (MY_EMAIL).", true); return; }
+    sendBtn.disabled = true;
+    say("Sending…");
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/" + MY_EMAIL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          _subject: friend + " sent you a secret 🤫",
+          _template: "table",
+          _captcha: "false",
+          from: friend,
+          call_booked_for: bookedLabel,
+          secret: secret
+        })
+      });
+      const data = await res.json();
+      if (res.ok && (data.success === true || data.success === "true")) {
+        box.value = "";
+        box.disabled = true;
+        say("Sent! Your secret is safe with me 🤐💛");
+        confetti(["💌", "💛"]);
+      } else {
+        throw new Error(data.message || "failed");
+      }
+    } catch (err) {
+      sendBtn.disabled = false;
+      say("Oops, that didn’t go through. Try again, or just call me 😅", true);
+    }
+  });
+
+  /* confetti */
+  function confetti(list) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (let i = 0; i < 36; i++) {
+      const s = document.createElement("span");
+      s.className = "confetti";
+      s.textContent = list[i % list.length];
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.animationDuration = 2 + Math.random() * 2.5 + "s";
+      s.style.animationDelay = Math.random() * 0.6 + "s";
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 5500);
+    }
+  }
+</script>
+</body>
+</html>
